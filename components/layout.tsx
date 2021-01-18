@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header>
         <Text
           as="h1"
-          fontSize="7em"
+          fontSize={["2em", "2.7em", "4em", "5.7em", "7em"]}
           textAlign="center"
           fontFamily="'Raleway Dots', sans-serif"
         >
@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Text>
         <Text
           as="h5"
-          fontSize="2em"
+          fontSize={["0.9em", "1em", "1.1em", "1.5em", "2em"]}
           textAlign="center"
           fontFamily="'Roboto', sans-serif"
         >

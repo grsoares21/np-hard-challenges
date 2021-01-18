@@ -1,73 +1,92 @@
-import { Box, Text, Image } from "@chakra-ui/react";
+import fs from "fs";
+import { Box, Text, Image, Button } from "@chakra-ui/react";
+import { join } from "path";
+import matter from "gray-matter";
+import Link from "next/link";
 
-const Challenge: React.FC<{
+const ChallengeBox: React.FC<{
+  slug: string;
   name: string;
   description: string;
   imgSrc: string;
-}> = ({ name, description, imgSrc }) => {
+}> = ({ name, description, imgSrc, slug }) => {
   return (
-    <Box border="1px" display="flex" padding="10px">
-      <Box bg="#CCCCC" width="40%">
+    <Box border="1px" display="flex" padding="15px" height="100%">
+      <Box bg="#CCCCC" width="40%" display="flex" alignItems="center">
         <Image src={imgSrc}></Image>
       </Box>
-      <Box width="60%" paddingX="15px">
+      <Box
+        width="60%"
+        paddingLeft="15px"
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="flex-end"
+      >
         <Text
           textAlign="center"
           as="h3"
           fontWeight="bold"
           fontFamily="'Roboto', sans-serif"
           marginY="10px"
+          width="100%"
         >
           {name}
         </Text>
-        <Text>{description}</Text>
+        <Text width="100%">{description}</Text>
+        <Link href={`/challenges/${slug}`}>
+          <Button
+            marginTop="10px"
+            alignSelf="flex-end"
+            bg="white"
+            border="1px solid black"
+          >
+            Resolver
+          </Button>
+        </Link>
       </Box>
     </Box>
   );
 };
 
-const challengeData = [
-  {
-    name: "The Travelling thief problem",
-    description:
-      "It is a combination of two well-known problems, the knapsack problem and the travelling salesman problem. Some parameters which are responsible for the interdependence of these two sub-problems are defined.",
-    imgSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Knapsack.svg/1280px-Knapsack.svg.png",
-  },
-  {
-    name: "The Knapsack Problem",
-    description:
-      "The knapsack problem is a problem in combinatorial optimization: Given a set of items, each with a weight and a value, determine the number of each item to include in a collection so that the total weight is less than or equal to a given limit and the total value is as large as possible.",
-    imgSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Knapsack.svg/1280px-Knapsack.svg.png",
-  },
-  {
-    name: "Challenge 3",
-    description: "This is the challenge 3",
-    imgSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Knapsack.svg/1280px-Knapsack.svg.png",
-  },
-  {
-    name: "Challenge 4",
-    description: "This is the challenge 4",
-    imgSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Knapsack.svg/1280px-Knapsack.svg.png",
-  },
-];
-
-export default function Challenges() {
+const Challenges: React.FC<{ challengeData: any[] }> = ({ challengeData }) => {
   return (
     <Box width="100%" display="flex" flexWrap="wrap">
       {challengeData.map((chal, i) => (
-        <Box width="50%" paddingX="60px" marginBottom="30px">
-          <Challenge
-            key={i}
+        <Box
+          width={["100%", "100%", "100%", "100%", "50%", "50%", "25%"]}
+          paddingX="60px"
+          marginBottom="30px"
+          key={i}
+        >
+          <ChallengeBox
             name={chal.name}
             description={chal.description}
             imgSrc={chal.imgSrc}
+            slug={chal.slug}
           />
         </Box>
       ))}
     </Box>
   );
+};
+
+export default Challenges;
+
+const challengesDirectory = join(process.cwd(), "challenges");
+
+export async function getStaticProps() {
+  const challengeFileNames = fs.readdirSync(challengesDirectory);
+
+  const challengeData = challengeFileNames.map((fileName) => {
+    const fileContent = fs.readFileSync(
+      join(challengesDirectory, fileName),
+      "utf8"
+    );
+    const { data } = matter(fileContent);
+    return { ...data, slug: fileName.replace(".md", "") };
+  });
+
+  return {
+    props: { challengeData },
+  };
 }
