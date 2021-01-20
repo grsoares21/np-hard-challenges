@@ -9,7 +9,6 @@ const Challenges: React.FC<{
   challengeName: string;
   challengeStatement: string;
 }> = ({ challengeName, challengeStatement }) => {
-  console.log(`Challenge statement ${challengeStatement}`);
   return (
     <Box width="100%">
       <Text as="h3" fontSize="2em" textAlign="center">
