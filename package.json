@@ -12,6 +12,8 @@
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
     "date-fns": "^2.11.1",
+    "firebase": "^8.2.3",
+    "firebase-admin": "^9.4.2",
     "framer-motion": "^3.2.1",
     "gray-matter": "^4.0.2",
     "multer": "^1.4.2",
