@@ -14,20 +14,13 @@ const LoginButton: React.FC = () => {
       bg="white"
       onClick={() => {
         if (user) {
-          console.log(`Yayy ${user.name} is logged in`);
+          console.log(`Yayy ${user.displayName} is logged in`);
         } else {
           firebase
             .auth()
             .signInWithPopup(githubAuthProvider)
             .then((result) => {
-              const { displayName, email } = result.user;
-              result.user.getIdToken().then((token) => {
-                setUser({
-                  token,
-                  email,
-                  name: displayName,
-                });
-              });
+              setUser(result.user);
             })
             .catch((error) => {
               console.error(error);
@@ -38,7 +31,7 @@ const LoginButton: React.FC = () => {
       {user ? (
         <>
           <FaGithub />
-          <Text marginLeft="10px">{user.name}</Text>
+          <Text marginLeft="10px">{user.displayName}</Text>
         </>
       ) : (
         <>

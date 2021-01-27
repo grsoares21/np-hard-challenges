@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import firebase from "firebase/app";
 
 export type User = {
   name: string;
@@ -7,8 +8,8 @@ export type User = {
 };
 
 type userContext = {
-  user?: User;
-  setUser: (user: User) => void;
+  user?: firebase.User;
+  setUser: (user: firebase.User) => void;
 };
 
 export default createContext<userContext>({
