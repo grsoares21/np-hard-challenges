@@ -22,7 +22,6 @@ const LoginButton: React.FC = () => {
             .then((result) => {
               const { displayName, email } = result.user;
               result.user.getIdToken().then((token) => {
-                console.log(token);
                 setUser({
                   token,
                   email,
@@ -69,10 +68,12 @@ export default function MainMenu() {
           <Text marginLeft="10px">Challenges</Text>
         </Button>
       </Link>
-      <Button bg="white">
-        <FaTrophy />
-        <Text marginLeft="10px">Leaderboard</Text>
-      </Button>
+      <Link href="/leaderboard">
+        <Button bg="white">
+          <FaTrophy />
+          <Text marginLeft="10px">Leaderboard</Text>
+        </Button>
+      </Link>
       <LoginButton />
       <Button bg="white">
         <FaFlag />
