@@ -38,8 +38,6 @@ export async function getServerSideProps(): Promise<{
     )
   );
 
-  console.log(listUsers);
-
   return {
     props: {
       leaderboardList: listUsers.map(({ name, totalScore }) => ({
