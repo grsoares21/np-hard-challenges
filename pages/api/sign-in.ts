@@ -16,6 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         await usersCollection.doc(uid).set({
           name,
           email,
+          totalScore: 0,
         });
       }
 

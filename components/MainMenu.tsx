@@ -22,6 +22,7 @@ const LoginButton: React.FC = () => {
             .then((result) => {
               const { displayName, email } = result.user;
               result.user.getIdToken().then((token) => {
+                console.log(token);
                 setUser({
                   token,
                   email,

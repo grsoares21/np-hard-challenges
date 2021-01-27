@@ -1,7 +1,7 @@
 import runMiddleware from "../../../../lib/runMiddleware";
 import multer from "multer";
 import admin from "../../../../lib/firebaseAdminApp";
-import kanpsackInstance from "./instance_1.json";
+import kanpsackInstance from "./instance-1.json";
 import firestore from "../../../../lib/firestore";
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -37,22 +37,37 @@ export default async (req: any, res: any) => {
         }
       }
 
-      const scoresCollection = firestore
+      const userDocument = firestore.collection("users").doc(uid);
+
+      const scoreDocument = await userDocument
         .collection("scores")
-        .doc("the-knapsack-problem")
-        .collection("scores");
+        .doc("the-knapsack-problem");
 
-      const currentScore = await scoresCollection.doc(uid).get();
+      const existingScore = await scoreDocument.get();
 
-      if (!currentScore.exists) {
-        await scoresCollection.doc(uid).set({ score: totalScore });
+      if (!existingScore.exists) {
+        await scoreDocument.set({ value: totalScore });
+
+        const userData = (await userDocument.get()).data();
+        userDocument.set({
+          ...userData,
+          totalScore: userData.totalScore + totalScore,
+        });
+
         newRecord = true;
       } else {
-        const previousScore = currentScore.data().score;
+        const previousScore = existingScore.data().value;
 
         if (totalScore > previousScore) {
           newRecord = true;
-          await scoresCollection.doc(uid).set({ score: totalScore });
+
+          const userData = (await userDocument.get()).data();
+          userDocument.set({
+            ...userData,
+            totalScore: userData.totalScore + (totalScore - previousScore),
+          });
+
+          await scoreDocument.set({ value: totalScore });
         }
       }
 
