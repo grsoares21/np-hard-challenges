@@ -51,7 +51,9 @@ export default async (req: any, res: any) => {
         const userData = (await userDocument.get()).data();
         userDocument.set({
           ...userData,
-          totalScore: userData.totalScore + totalScore,
+          totalScore: userData.totalScore
+            ? userData.totalScore + totalScore
+            : totalScore,
         });
 
         newRecord = true;
@@ -62,9 +64,12 @@ export default async (req: any, res: any) => {
           newRecord = true;
 
           const userData = (await userDocument.get()).data();
+
           userDocument.set({
             ...userData,
-            totalScore: userData.totalScore + (totalScore - previousScore),
+            totalScore: userData.totalScore
+              ? userData.totalScore + (totalScore - previousScore)
+              : totalScore - previousScore,
           });
 
           await scoreDocument.set({ value: totalScore });
