@@ -1,6 +1,16 @@
-export default function runMiddleware(req, res, fn): Promise<any> {
+import { NextApiRequest, NextApiResponse } from "next";
+
+export default function runMiddleware(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  middleware: (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: (result?: any) => void
+  ) => void
+): Promise<any> {
   return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
+    middleware(req, res, (result) => {
       if (result instanceof Error) {
         return reject(result);
       }

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useContext } from "react";
 import { FaPuzzlePiece, FaTrophy, FaGithub, FaFlag } from "react-icons/fa";
 import UserContext from "../contexts/UserContext";
-import firebase from "../lib/firebaseApp";
-import githubAuthProvider from "../lib/githubAuthProvider";
+import firebase from "../lib/firebase/firebaseApp";
+import githubAuthProvider from "../lib/firebase/githubAuthProvider";
 
 const LoginButton: React.FC = () => {
   const { user, setUser } = useContext(UserContext);

@@ -1,5 +1,5 @@
 import { Box, list, Text } from "@chakra-ui/react";
-import firestore from "../../lib/firestore";
+import firestore from "../../lib/firebase/firestore";
 
 interface LeaderboardProps {
   leaderboardList: { name: string; totalScore: number }[];
