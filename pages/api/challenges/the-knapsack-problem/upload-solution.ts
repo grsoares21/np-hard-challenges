@@ -58,9 +58,7 @@ export default async (
       const userData = (await userDocument.get()).data();
       userDocument.set({
         ...userData,
-        totalScore: userData.totalScore
-          ? userData.totalScore + totalScore
-          : totalScore,
+        totalScore: userData.totalScore + totalScore,
       });
 
       newRecord = true;
@@ -74,9 +72,7 @@ export default async (
 
         userDocument.set({
           ...userData,
-          totalScore: userData.totalScore
-            ? userData.totalScore + (totalScore - previousScore)
-            : totalScore - previousScore,
+          totalScore: userData.totalScore + (totalScore - previousScore),
         });
 
         await scoreDocument.set({ value: totalScore });

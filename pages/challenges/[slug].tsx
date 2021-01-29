@@ -1,12 +1,14 @@
 import fs from "fs";
-import { Box, Text, Spinner, Button } from "@chakra-ui/react";
+import { Box, Text, Spinner, Button, Fade, EASINGS } from "@chakra-ui/react";
 import { join } from "path";
 import matter from "gray-matter";
 import remark from "remark";
 import html from "remark-html";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
+import useAnimatedNumber from "use-animate-number";
+import { easeInSine } from "use-animate-number/lib/easingFunctions";
 
 const Challenges: React.FC<{
   challengeName: string;
@@ -15,6 +17,15 @@ const Challenges: React.FC<{
 }> = ({ challengeName, challengeStatement, challengeCode }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
+  const [showScore, setShowScore] = useState(false);
+
+  const [validSolution, setValidSolution] = useState(false);
+  const [newRecord, setNewRecord] = useState(false);
+  const [animatedScore, setAnimatedScore] = useAnimatedNumber(0, {
+    decimals: 0,
+    duration: 2300,
+    easing: "easeOutCirc",
+  });
 
   const { user } = useContext(UserContext);
 
@@ -40,12 +51,17 @@ const Challenges: React.FC<{
               fileInputRef.current.value = "";
             }
             if (!data.validSolution) {
-              alert("Solução invalida");
+              setValidSolution(false);
+              setNewRecord(false);
             } else if (data.newRecord) {
-              alert(`Parabéns, novo recorde: ${data.score}`);
+              setValidSolution(true);
+              setNewRecord(true);
             } else {
-              alert(`Score: ${data.score}`);
+              setValidSolution(true);
+              setNewRecord(false);
             }
+            setAnimatedScore(data.score, false);
+            setShowScore(true);
           })
           .catch((error) => {
             console.error(error);
@@ -55,12 +71,65 @@ const Challenges: React.FC<{
     }
   };
 
+  useEffect(() => {
+    if (showScore) {
+      const showScoreTimeout = setTimeout(() => {
+        setShowScore(false);
+        setAnimatedScore(0, true);
+      }, 2500);
+
+      return () => {
+        clearTimeout(showScoreTimeout);
+      };
+    }
+  }, [showScore]);
+
   return (
     <Box width="100%">
       <Text as="h3" fontSize="2em" textAlign="center">
         {challengeName}
       </Text>
-
+      <Fade
+        in={showScore}
+        unmountOnExit={true}
+        variants={{
+          exit: {
+            opacity: 0,
+            transition: {
+              duration: 0.2,
+              ease: EASINGS.easeOut,
+            },
+          },
+          enter: {
+            opacity: 1,
+            transition: {
+              duration: 0.25,
+              ease: EASINGS.easeIn,
+            },
+          },
+        }}
+      >
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          width="100vw"
+          height="100vh"
+          backgroundColor="#FFF"
+          zIndex="10"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text fontSize={100}>
+            {validSolution
+              ? newRecord
+                ? `Novo Recorde! ${animatedScore} pontos`
+                : `${animatedScore} pontos`
+              : "Solução invalida!"}
+          </Text>
+        </Box>
+      </Fade>
       <Box
         border="dashed 1px black"
         marginTop="20px"

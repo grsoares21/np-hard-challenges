@@ -22,7 +22,8 @@
     "react-dom": "16.13.1",
     "react-icons": "^4.1.0",
     "remark": "^13.0.0",
-    "remark-html": "^13.0.1"
+    "remark-html": "^13.0.1",
+    "use-animate-number": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^13.11.0",
