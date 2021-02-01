@@ -7,8 +7,7 @@ import html from "remark-html";
 import { useEffect, useRef, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
-import useAnimatedNumber from "use-animate-number";
-import { easeInSine } from "use-animate-number/lib/easingFunctions";
+import useAnimatedNumber from "../../hooks/useAnimateNumber";
 
 const Challenges: React.FC<{
   challengeName: string;
@@ -23,8 +22,9 @@ const Challenges: React.FC<{
   const [newRecord, setNewRecord] = useState(false);
   const [animatedScore, setAnimatedScore] = useAnimatedNumber(0, {
     decimals: 0,
-    duration: 2300,
-    easing: "easeOutCirc",
+    duration: 5000,
+    enterance: false,
+    easing: "easeOutQuint",
   });
 
   const { user } = useContext(UserContext);
@@ -76,7 +76,7 @@ const Challenges: React.FC<{
       const showScoreTimeout = setTimeout(() => {
         setShowScore(false);
         setAnimatedScore(0, true);
-      }, 2500);
+      }, 6500);
 
       return () => {
         clearTimeout(showScoreTimeout);
