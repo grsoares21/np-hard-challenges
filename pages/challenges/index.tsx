@@ -75,11 +75,14 @@ export default Challenges;
 const challengesDirectory = join(process.cwd(), "challenges");
 
 export async function getStaticProps() {
-  const challengeFileNames = fs.readdirSync(challengesDirectory);
+  const challengeFileNames = fs
+    .readdirSync(challengesDirectory, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 
   const challengeData = challengeFileNames.map((fileName) => {
     const fileContent = fs.readFileSync(
-      join(challengesDirectory, fileName),
+      join(challengesDirectory, fileName, "statement.md"),
       "utf8"
     );
     const { data } = matter(fileContent);

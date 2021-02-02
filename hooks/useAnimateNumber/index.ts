@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import * as easings from "./easingFunctions";
 
-export type IeasingFunction = (
+export type EasingFunction = (
   elapsed: number,
   initialValue: number,
   amountOfChange: number,
@@ -11,7 +11,7 @@ export type IeasingFunction = (
   s?: number
 ) => number;
 
-export interface IuseAnimateNumberOptions {
+export interface UseAnimateNumberOptions {
   duration?: number;
   enterance?: boolean;
   direct?: boolean;
@@ -20,9 +20,9 @@ export interface IuseAnimateNumberOptions {
   decimals?: number;
 }
 
-export type IuseAnimateNumber = (
+export type UseAnimateNumber = (
   val: number,
-  options?: IuseAnimateNumberOptions
+  options?: UseAnimateNumberOptions
 ) => [number, (state: number, skip: boolean) => void];
 
 export type ITimerRef = ReturnType<typeof setTimeout>;
@@ -38,7 +38,7 @@ const defaultOptions = {
   decimals: 2,
 };
 
-const useAnimateNumber: IuseAnimateNumber = (initial = 0, options) => {
+const useAnimateNumber: UseAnimateNumber = (initial = 0, options) => {
   const conf = {
     ...defaultOptions,
     ...options,
@@ -77,7 +77,7 @@ const useAnimateNumber: IuseAnimateNumber = (initial = 0, options) => {
     }
   }, [animationInfo]);
 
-  const easingFn: IeasingFunction = (...args) => easings[conf.easing](...args);
+  const easingFn: EasingFunction = (...args) => easings[conf.easing](...args);
 
   const handleValueSet = (value: number, skip = conf.disabled) => {
     clearTm();

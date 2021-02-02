@@ -33,11 +33,12 @@ const Challenges: React.FC<{
     if (fileInputRef.current) {
       const body = new FormData();
       body.append("solution", fileInputRef.current.files[0]);
+      body.append("challengeId", challengeCode);
 
       setLoading(true);
       user.getIdToken().then((token) => {
         console.log("calling upload solution");
-        fetch(`/api/challenges/${challengeCode}/upload-solution`, {
+        fetch(`/api/challenges/upload-solution`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -170,7 +171,10 @@ const challengesDirectory = join(process.cwd(), "challenges");
 
 export async function getStaticProps({ params }) {
   const challengeData = matter(
-    fs.readFileSync(join(challengesDirectory, params.slug + ".md"), "utf8")
+    fs.readFileSync(
+      join(challengesDirectory, params.slug, "statement.md"),
+      "utf8"
+    )
   );
 
   const challengeStatement = (
@@ -182,14 +186,17 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       challengeName: challengeData.data.name,
-      challengeCode: "the-knapsack-problem", // TODO: replace by slug
+      challengeCode: params.slug,
       challengeStatement,
     },
   };
 }
 
 export async function getStaticPaths() {
-  const challengeFileNames = fs.readdirSync(challengesDirectory);
+  const challengeFileNames = fs
+    .readdirSync(challengesDirectory, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 
   return {
     paths: challengeFileNames.map((fileName) => {

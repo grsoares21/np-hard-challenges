@@ -1,13 +1,13 @@
-import runMiddleware from "../../../../lib/runMiddleware";
+import runMiddleware from "../../../lib/runMiddleware";
 import multer from "multer";
-import kanpsackInstance from "./instance-1.json";
-import firestore from "../../../../lib/firebase/firestore";
+import firestore from "../../../lib/firebase/firestore";
 import authenticationMiddleware, {
   AuthenticatedRequest,
-} from "../../../../lib/firebase/authenticationMiddleware";
+} from "../../../lib/firebase/authenticationMiddleware";
 import { NextApiRequest } from "next";
+import evaluationFunctions from "../../../challenges/evaluationFunctions";
 
-const upload = multer({ storage: multer.memoryStorage() });
+const multipartFormHandler = multer({ storage: multer.memoryStorage() });
 
 export interface FileUploadRequest extends NextApiRequest {
   file: { buffer: string };
@@ -18,69 +18,62 @@ export default async (
   res: any
 ) => {
   await runMiddleware(req, res, authenticationMiddleware);
-  await runMiddleware(req, res, upload.single("solution"));
+  await runMiddleware(req, res, multipartFormHandler.single("solution") as any);
 
   try {
-    const solution = String(req.file.buffer).split("\n");
     let newRecord = false;
 
-    let totalScore = 0;
-    let currentSize = 0;
+    // TODO: add validation for challenge Id and return 400 if invalid
+    const { score, validSolution } = evaluationFunctions[req.body.challengeId](
+      String(req.file.buffer)
+    );
 
-    for (let i = 0; i < solution.length; i++) {
-      const { value, size } = kanpsackInstance.items[+solution[i]];
+    if (!validSolution) {
+      res.send({
+        score,
+        validSolution,
+        newRecord: false,
+      });
 
-      currentSize += size;
-      totalScore += value;
-
-      if (currentSize > kanpsackInstance.knapsackSize) {
-        res.send({
-          score: 0,
-          validSolution: false,
-          newRecord,
-        });
-
-        return;
-      }
+      return;
     }
 
     const userDocument = firestore.collection("users").doc(req.user.uid);
-
     const scoreDocument = await userDocument
       .collection("scores")
-      .doc("the-knapsack-problem");
+      .doc(req.body.challengeId);
 
     const existingScore = await scoreDocument.get();
 
     if (!existingScore.exists) {
-      await scoreDocument.set({ value: totalScore });
+      await scoreDocument.set({ value: score });
 
       const userData = (await userDocument.get()).data();
       userDocument.set({
         ...userData,
-        totalScore: userData.totalScore + totalScore,
+        totalScore: userData.totalScore + score,
       });
 
       newRecord = true;
     } else {
       const previousScore = existingScore.data().value;
 
-      if (totalScore > previousScore) {
+      if (score > previousScore) {
         newRecord = true;
 
         const userData = (await userDocument.get()).data();
 
         userDocument.set({
           ...userData,
-          totalScore: userData.totalScore + (totalScore - previousScore),
+          totalScore: userData.totalScore + (score - previousScore),
         });
 
-        await scoreDocument.set({ value: totalScore });
+        await scoreDocument.set({ value: score });
       }
     }
 
     return res.send({
-      score: totalScore,
+      score,
       validSolution: true,
       newRecord,
     });
