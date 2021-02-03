@@ -1,4 +1,4 @@
-import lalalaProblemEvaluationFunction from "./lalala-problem/evaluationFunction";
+import lalalaProblemEvaluationFunction from "./the-travelling-salesman-problem/evaluationFunction";
 import theKnapsackProblemEvaluationFunction from "./the-knapsack-problem/evaluationFunction";
 import theTravellingThiefProblemEvaluationFunction from "./the-travelling-thief-problem/evaluationFunction";
 import { EvaluationFunction } from "./types";

@@ -1,5 +1,5 @@
 import { EvaluationFunction } from "../types";
-import kanpsackInstance from "../the-knapsack-problem/instance.json";
+import kanpsackInstance from "./instance.json";
 
 const evaluateKnapsackProblem: EvaluationFunction = (textSolution: string) => {
   const solution = textSolution.split("\n");

@@ -4,10 +4,50 @@ import { join } from "path";
 import matter from "gray-matter";
 import remark from "remark";
 import html from "remark-html";
+import highlight from "remark-highlight.js";
 import { useEffect, useRef, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
 import useAnimatedNumber from "../../hooks/useAnimateNumber";
+import styled from '@emotion/styled'
+
+
+const StatementBox = styled(Box)`
+  h2 {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-top: 20px;
+    margin-bottom: 5px;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+
+  p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  pre {
+    margin: 10px;
+    padding: 10px;
+    background-color: #F0F0F0;
+    white-space: pre-wrap;
+  }
+
+  .hljs-comment {
+    color: green;
+    opacity: 0.9;
+  }
+
+  .hljs-number {
+    color: blue;
+    opacity: 0.9;
+  }
+`;
+
+
 
 const Challenges: React.FC<{
   challengeName: string;
@@ -34,7 +74,7 @@ const Challenges: React.FC<{
       const body = new FormData();
       body.append("solution", fileInputRef.current.files[0]);
       body.append("challengeId", challengeCode);
-
+ 
       setLoading(true);
       user.getIdToken().then((token) => {
         console.log("calling upload solution");
@@ -86,10 +126,7 @@ const Challenges: React.FC<{
   }, [showScore]);
 
   return (
-    <Box width="100%">
-      <Text as="h3" fontSize="2em" textAlign="center">
-        {challengeName}
-      </Text>
+    <Box width="100%">      
       <Fade
         in={showScore}
         unmountOnExit={true}
@@ -155,11 +192,14 @@ const Challenges: React.FC<{
             {loading ? <Spinner /> : "Upload Solution"}
           </Button>
         </Box>
-        <Box
+        <Text as="h1" fontSize="2em" textAlign="center" fontWeight="bold" marginY="10px">
+        {challengeName}
+      </Text>
+        <StatementBox
           dangerouslySetInnerHTML={{
             __html: challengeStatement,
           }}
-        ></Box>
+        ></StatementBox>
       </Box>
     </Box>
   );
@@ -174,12 +214,15 @@ export async function getStaticProps({ params }) {
     fs.readFileSync(
       join(challengesDirectory, params.slug, "statement.md"),
       "utf8"
-    )
+    ), {
+
+    }
   );
 
   const challengeStatement = (
     await remark()
       .use(html)
+      .use(highlight)
       .process(challengeData.content ?? "")
   ).toString();
 

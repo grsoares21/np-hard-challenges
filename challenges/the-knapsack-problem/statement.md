@@ -1,58 +1,56 @@
 ---
 name: "The Knapsack Problem"
-description: "The knapsack problem is a problem in combinatorial optimization: Given a set of items, each with a weight and a value, determine the number of each item to include in a collection so that the total weight is less than or equal to a given limit and the total value is as large as possible."
+description: "Given a set of items with a weight and a value and given a knapsack with a maximum capacity, determine
+which items to include in the knapsack in order to maximise the total value inside it."
 imgSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Knapsack.svg/1280px-Knapsack.svg.png"
 ---
 
-O **Ninjas in Pyjamas** não deu espaço para a **FaZe Clan** e conquistou neste domingo o título do [**Major Regional de Rainbow Six**](https://r6esportsbr.com/news/guide-six-major-latam-august-2020). Entrando na série com uma vitória de vantagem devido a classificação através da chave dos vencedores, os Ninjas levaram a melhor nos dois mapas disputados e garantiram o título. **Murilo “Muzi”** foi eleito o MVP da final com 85 pontos de rating.
-</br>
+The Knapsack Problem is one of the most classical NP-Hard optimization problems. It's concepts is fairly simple to understand.
+You have a Knapsack that can carry a limited number of items, defined by it's _capacity_ measured in kilograms.
 
-Além da premiação em dinheiro no valor de US$50 mil (aproximadamente R$271 mil na cotação atual), o NiP somou 510 pontos na briga por uma vaga no **Six Invitational 2021**.
+You also have a list of items that you can choose to put inside the knapsack or not. Each item in the list has a weight and a value.
 
-</br>
-Confira como foram as partidas da grande final:
-</br>
+Your objective is to select a set items that fit inside the knapsack and to maximise the total value inside it.
 
-No **Litoral**, escolha dos Ninjas, a FaZe conseguiu plantar o desativador nas quatro primeiras rodadas, mas pontuou somente na primeira e na quarta, sendo a última assegurada pelo ion, que levou quatro jogadores do time adversário. Após o placar estacionar no 2-2, o NiP tomou o controle da partida e fechou o primeiro tempo no 4-2. No ataque, o time de **Psycho** abriu o quinto ponto e quase assegurou o sexto, mas o live salvou para a FaZe, que logo na sequência fez uma rodada perfeita e se aproximou no placar. No detalhe, os Ninjas trouxeram o sexto ponto, e mesmo correndo atrás do empate com vitória na rodada seguinte, o time de **mav** não travou o triunfo do NiP, que levou seu mapa no 7-5.
-</br></br>
+## Input
 
-<center>
-<iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" title="Twitter Tweet" src="https://platform.twitter.com/embed/index.html?creatorScreenName=TheEnemyBR&amp;dnt=false&amp;embedId=twitter-widget-0&amp;frame=false&amp;hideCard=false&amp;hideThread=false&amp;id=1292534776063303680&amp;lang=pt&amp;origin=https%3A%2F%2Fwww.theenemy.com.br%2Fesports%2Frainbow-six-ninjas-in-pyjamas-vence-faze-e-e-campea-do-six-major-regional&amp;siteScreenName=TheEnemyBR&amp;theme=light&amp;widgetsVersion=223fc1c4%3A1596143124634&amp;width=550px" data-tweet-id="1292534776063303680" style="box-sizing: border-box; text-rendering: optimizespeed; max-width: 100%; position: static; visibility: visible; width: 550px; height: 715px; display: block; flex-grow: 1;"></iframe>
-</br></br></center>
+The input of your code corresponds to an instance of the Knapsack Problem: a list of items with their corresponding weights and values as well as the capacity of the knapsack.
 
-No **Oregon**, o NiP abriu o primeiro ponto, mas a FaZe logo devolveu e deixou tudo igual no seu mapa de escolha. No entanto, o confronto desandou e seguiu completamente dominado pelos Ninjas, que garantiram 5-1 na primeira metade. Na virada de lado, **Astro** trouxe o segundo ponto para a FaZe, que manteve o embalo e fez mais dois em sequência. Ainda que tenha se aproximado do empate, a FaZe não conseguiu o quinto ponto; Muzi brilhou, manteve os Ninjas à frente no placar e trouxe e garantiu a vitória do NiP no 7-4.
-</br></br>
+The format of the input file is as follows:
+**First line**: the capacity of the knapsack
+**Second line**: _n_ corresponding to the number of possible items to select from
+**Next _n_ lines**: _w_ and _v_ values separated by a whitespace corresponding to the weight and value respectively of each item
 
-<center>
-<iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" title="Twitter Tweet" src="https://platform.twitter.com/embed/index.html?creatorScreenName=TheEnemyBR&amp;dnt=false&amp;embedId=twitter-widget-1&amp;frame=false&amp;hideCard=false&amp;hideThread=false&amp;id=1292548581115789312&amp;lang=pt&amp;origin=https%3A%2F%2Fwww.theenemy.com.br%2Fesports%2Frainbow-six-ninjas-in-pyjamas-vence-faze-e-e-campea-do-six-major-regional&amp;siteScreenName=TheEnemyBR&amp;theme=light&amp;widgetsVersion=223fc1c4%3A1596143124634&amp;width=550px" data-tweet-id="1292548581115789312" style="box-sizing: border-box; text-rendering: optimizespeed; max-width: 100%; position: static; visibility: visible; width: 550px; height: 715px; display: block; flex-grow: 1;"></iframe>
-</br></center>
+### Example of input
+```python
+1400 #a knapsack thhat can carry up to 1400 kg, yeah, for real
+5 #there will be 5 items to choose from
+400 400 #item 0: weights 400 kg and is worth 400
+1000 800 #item 1: weights 1000 kg and is worth 800
+900 750 #item 2: weights 900 kg and is worth 750
+550 600 #item 3: weights 550 kg and is worth 600
+1100 1150 #item 4: weights 1100 kg and is worth 1150
+```
 
-## **Premiação**
+## Solution
 
-> Ninjas in Pyjamas (BRASIL) - US$50 mil (R$271 mil) + 510 SI pts </br>
-> FaZe Clan (BRASIL) - US$25 mil (R$136 mil) + 390 SI pts</br>
-> Team Liquid (BRASIL) - US$15 mil (R$81 mil) + 330 SI pts</br>
-> Team oNe (BRASIL) - US$10 mil (R$54 mil) + 275 SI pts</br>
-> Estral Esports (MÉXICO) - 225 SI pts</br>
-> MIBR 180 (BRASIL) - SI pts</br>
-> Timbers Esports (MÉXICO) - 140 SI pts</br>
-> Coscu Army (CHILE) - 115 SI pts</br>
+The solution is the list of items to be put in the knapsack. The file to be uploaded is a .txt file with the index of each item in the original list (starting in 0) separated by a new line.
 
-## **Resultados - Dia 1**
+### Example of solution
 
-> Team oNe 1x2 FaZe</br>
-> Liquid 1x2 NiP</br>
-> oNe 0x2 Liquid</br>
+```python
+0 #select item 0 to put in the knapsack
+1 #select item 1 to put in the knapsack
+```
 
-## **Resultados - Dia 2**
+## Validity
 
-> FaZe 0x2 NiP</br>
-> Liquid 1x2 FaZe</br>
+A solution is valid if and only if:
 
-## **Resultado - Dia 3**
+- There are no repeated items on the list
+- The index of all selected items correspond correctly to items in the original list
+- The sum of weights of the original items is less or equal to the capacity of the knapsack
 
-> NiP 3x0 FaZe</br>
+## Score
 
-## **Brasileirão 2021**
-
-O BR6 retorna para o seu 2º turno na quinta-feira do dia 3/9. </br></br>Team oNe e W7M abrem o campeonato às 13h</br></br>INTZ x FURIA - 15:30</br></br>FaZe x MIBR fecham a primeira rodada.
+The score of a solution is the sum of values of all selected items. In the example solution above, the total score is **1200**.
