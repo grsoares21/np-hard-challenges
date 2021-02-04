@@ -17,13 +17,13 @@ Your objective is to select a set items that fit inside the knapsack and to maxi
 The input of your code corresponds to an instance of the Knapsack Problem: a list of items with their corresponding weights and values as well as the capacity of the knapsack.
 
 The format of the input file is as follows:
-**First line**: the capacity of the knapsack
-**Second line**: _n_ corresponding to the number of possible items to select from
-**Next _n_ lines**: _w_ and _v_ values separated by a whitespace corresponding to the weight and value respectively of each item
+- **First line**: the capacity of the knapsack
+- **Second line**: _n_ corresponding to the number of possible items to select from
+- **Next _n_ lines**: _w_ and _v_ values separated by a whitespace corresponding to the weight and value respectively of each item
 
 ### Example of input
 ```python
-1400 #a knapsack thhat can carry up to 1400 kg, yeah, for real
+1400 #a knapsack that can carry up to 1400 kg, yeah, for real
 5 #there will be 5 items to choose from
 400 400 #item 0: weights 400 kg and is worth 400
 1000 800 #item 1: weights 1000 kg and is worth 800
