@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Box, Text, Spinner, Button, Fade, EASINGS } from "@chakra-ui/react";
+import { Box, Text, Spinner, Button, Fade, EASINGS, Link } from "@chakra-ui/react";
 import { join } from "path";
 import matter from "gray-matter";
 import remark from "remark";
@@ -9,8 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
 import useAnimatedNumber from "../../hooks/useAnimateNumber";
-import styled from '@emotion/styled'
-
+import styled from "@emotion/styled";
 
 const StatementBox = styled(Box)`
   h2 {
@@ -32,28 +31,26 @@ const StatementBox = styled(Box)`
   pre {
     margin: 10px;
     padding: 10px;
-    background-color: #F0F0F0;
+    background-color: #f0f0f0;
     white-space: pre-wrap;
   }
 
   .hljs-comment {
     color: green;
-    opacity: 0.9;
+    opacity: 0.75;
   }
 
   .hljs-number {
     color: blue;
-    opacity: 0.9;
+    opacity: 0.75;
   }
 `;
-
-
 
 const Challenges: React.FC<{
   challengeName: string;
   challengeStatement: string;
-  challengeCode: string;
-}> = ({ challengeName, challengeStatement, challengeCode }) => {
+  challengeId: string;
+}> = ({ challengeName, challengeStatement, challengeId }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [showScore, setShowScore] = useState(false);
@@ -73,8 +70,8 @@ const Challenges: React.FC<{
     if (fileInputRef.current) {
       const body = new FormData();
       body.append("solution", fileInputRef.current.files[0]);
-      body.append("challengeId", challengeCode);
- 
+      body.append("challengeId", challengeId);
+
       setLoading(true);
       user.getIdToken().then((token) => {
         console.log("calling upload solution");
@@ -126,7 +123,7 @@ const Challenges: React.FC<{
   }, [showScore]);
 
   return (
-    <Box width="100%">      
+    <Box width="100%">
       <Fade
         in={showScore}
         unmountOnExit={true}
@@ -174,7 +171,12 @@ const Challenges: React.FC<{
         marginX={["10px", "20px", "70px", "200px", "300px"]}
         padding="15px"
       >
-        <Box display="flex" width="100%" justifyContent="flex-end">
+        <Box display="flex" width="100%" justifyContent="space-between">
+          <Link href={`/api/challenges/input/${challengeId}`} target="_blank" rel="noopener noreferrer" _hover={{
+            textDecoration: "none"
+          }}>
+            <Button>Download Input</Button>
+          </Link>
           <form>
             <input
               type="file"
@@ -192,9 +194,15 @@ const Challenges: React.FC<{
             {loading ? <Spinner /> : "Upload Solution"}
           </Button>
         </Box>
-        <Text as="h1" fontSize="2em" textAlign="center" fontWeight="bold" marginY="10px">
-        {challengeName}
-      </Text>
+        <Text
+          as="h1"
+          fontSize="2em"
+          textAlign="center"
+          fontWeight="bold"
+          marginY="10px"
+        >
+          {challengeName}
+        </Text>
         <StatementBox
           dangerouslySetInnerHTML={{
             __html: challengeStatement,
@@ -214,9 +222,8 @@ export async function getStaticProps({ params }) {
     fs.readFileSync(
       join(challengesDirectory, params.slug, "statement.md"),
       "utf8"
-    ), {
-
-    }
+    ),
+    {}
   );
 
   const challengeStatement = (
@@ -229,7 +236,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       challengeName: challengeData.data.name,
-      challengeCode: params.slug,
+      challengeId: params.slug,
       challengeStatement,
     },
   };
