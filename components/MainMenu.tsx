@@ -68,9 +68,6 @@ export default function MainMenu() {
         </Button>
       </Link>
       <LoginButton />
-      <Button bg="white">
-        <FaFlag />
-      </Button>
     </Box>
   );
 }

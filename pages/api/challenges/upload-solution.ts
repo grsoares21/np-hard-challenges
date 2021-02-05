@@ -39,36 +39,32 @@ export default async (
     }
 
     const userDocument = firestore.collection("users").doc(req.user.uid);
-    const scoreDocument = await userDocument
-      .collection("scores")
-      .doc(req.body.challengeId);
+    const userData = await (await userDocument.get()).data();
+    const userScores = userData.scores;
 
-    const existingScore = await scoreDocument.get();
+    const existingScore = userScores[req.body.challengeId];
 
-    if (!existingScore.exists) {
-      await scoreDocument.set({ value: score });
-
-      const userData = (await userDocument.get()).data();
-      userDocument.set({
+    if (!existingScore) {
+      const newScores = { ...userData.scores };
+      newScores[req.body.challengeId] = score;
+      await userDocument.set({
         ...userData,
+        scores: newScores,
         totalScore: userData.totalScore + score,
       });
 
       newRecord = true;
     } else {
-      const previousScore = existingScore.data().value;
-
-      if (score > previousScore) {
+      if (score > existingScore) {
         newRecord = true;
 
-        const userData = (await userDocument.get()).data();
-
-        userDocument.set({
+        const newScores = { ...userData.scores };
+        newScores[req.body.challengeId] = score;
+        await userDocument.set({
           ...userData,
-          totalScore: userData.totalScore + (score - previousScore),
+          scores: newScores,
+          totalScore: userData.totalScore + (score - existingScore),
         });
-
-        await scoreDocument.set({ value: score });
       }
     }
 

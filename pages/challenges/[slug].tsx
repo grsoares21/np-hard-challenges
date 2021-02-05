@@ -1,15 +1,25 @@
 import fs from "fs";
-import { Box, Text, Spinner, Button, Fade, EASINGS, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Spinner,
+  Button,
+  Fade,
+  EASINGS,
+  Link,
+} from "@chakra-ui/react";
 import { join } from "path";
 import matter from "gray-matter";
 import remark from "remark";
 import html from "remark-html";
 import highlight from "remark-highlight.js";
+import { FaTrophy, FaFileDownload, FaUpload } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
 import useAnimatedNumber from "../../hooks/useAnimateNumber";
 import styled from "@emotion/styled";
+import NextLink from "next/link";
 
 const StatementBox = styled(Box)`
   h2 {
@@ -54,6 +64,7 @@ const Challenges: React.FC<{
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [showScore, setShowScore] = useState(false);
+  const [userMaxScore, setUserMaxScore] = useState<number | null>(null);
 
   const [validSolution, setValidSolution] = useState(false);
   const [newRecord, setNewRecord] = useState(false);
@@ -66,6 +77,19 @@ const Challenges: React.FC<{
 
   const { user } = useContext(UserContext);
 
+  useEffect(() => {
+    user?.getIdToken().then((token) => {
+      fetch(`/api/challenges/getUserScore/${challengeId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((result) => result.json())
+        .then((score) => setUserMaxScore(score));
+    });
+  }, [user]);
+
   const onChooseFile = () => {
     if (fileInputRef.current) {
       const body = new FormData();
@@ -74,7 +98,6 @@ const Challenges: React.FC<{
 
       setLoading(true);
       user.getIdToken().then((token) => {
-        console.log("calling upload solution");
         fetch(`/api/challenges/upload-solution`, {
           method: "POST",
           headers: {
@@ -123,7 +146,7 @@ const Challenges: React.FC<{
   }, [showScore]);
 
   return (
-    <Box width="100%">
+    <>
       <Fade
         in={showScore}
         unmountOnExit={true}
@@ -166,32 +189,70 @@ const Challenges: React.FC<{
         </Box>
       </Fade>
       <Box
+        display="flex"
+        marginX={["10px", "20px", "70px", "200px", "300px"]}
+        padding="15px"
+        justifyContent="flex-end"
+      >
+        <NextLink href={`/challenges/leaderboard/${challengeId}`}>
+          <Button>
+            <FaTrophy />
+            <Text marginLeft="10px">Challenge Leaderboard</Text>
+          </Button>
+        </NextLink>
+      </Box>
+      <Box
         border="dashed 1px black"
         marginTop="20px"
         marginX={["10px", "20px", "70px", "200px", "300px"]}
         padding="15px"
       >
-        <Box display="flex" width="100%" justifyContent="space-between">
-          <Link href={`/api/challenges/input/${challengeId}`} target="_blank" rel="noopener noreferrer" _hover={{
-            textDecoration: "none"
-          }}>
-            <Button>Download Input</Button>
+        <form>
+          <input
+            type="file"
+            hidden
+            ref={fileInputRef}
+            onChange={onChooseFile}
+            accept=".txt"
+          />
+        </form>
+        <Box
+          display="flex"
+          width="100%"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Link
+            href={`/api/challenges/input/${challengeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            _hover={{
+              textDecoration: "none",
+            }}
+          >
+            <Button>
+              <FaFileDownload />
+              <Text marginLeft="10px">Download Input</Text>
+            </Button>
           </Link>
-          <form>
-            <input
-              type="file"
-              hidden
-              ref={fileInputRef}
-              onChange={onChooseFile}
-              accept=".txt"
-            />
-          </form>
+          {user && (
+            <Text>
+              Your max score: <b>{userMaxScore ?? <Spinner size="xs" />}</b>
+            </Text>
+          )}
           <Button
             onClick={() => {
               fileInputRef.current?.click();
             }}
           >
-            {loading ? <Spinner /> : "Upload Solution"}
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <FaUpload />
+                <Text marginLeft="10px">Upload Solution</Text>
+              </>
+            )}
           </Button>
         </Box>
         <Text
@@ -209,7 +270,7 @@ const Challenges: React.FC<{
           }}
         ></StatementBox>
       </Box>
-    </Box>
+    </>
   );
 };
 
