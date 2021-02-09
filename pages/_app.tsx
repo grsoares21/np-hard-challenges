@@ -3,8 +3,9 @@ import { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import Layout from "../components/layout";
 import { useEffect, useState } from "react";
-import UserContext, { User } from "../contexts/UserContext";
-import firebase from "firebase";
+import UserContext from "../contexts/UserContext";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [user, setUser] = useState<firebase.User>();
