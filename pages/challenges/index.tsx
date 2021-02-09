@@ -40,7 +40,7 @@ const ChallengeBox: React.FC<{
             bg="white"
             border="1px solid black"
           >
-            Resolver
+            Solve
           </Button>
         </Link>
       </Box>

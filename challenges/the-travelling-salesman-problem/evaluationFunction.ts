@@ -1,30 +1,77 @@
 import { EvaluationFunction } from "../types";
-import kanpsackInstance from "../the-knapsack-problem/instance.json";
+import instance from "./instance.json";
 
-const evaluateKnapsackProblem: EvaluationFunction = (textSolution: string) => {
-  const solution = textSolution.split("\n");
+const evaluateTheTravellingSalesmanProlem: EvaluationFunction = (
+  textSolution: string
+) => {
+  const solution = textSolution.split("\n").map((city) => parseInt(city));
 
-  let totalScore = 0;
-  let currentSize = 0;
+  let totalTraveledDistance = 0;
 
-  for (let i = 0; i < solution.length; i++) {
-    const { value, size } = kanpsackInstance.items[+solution[i]];
+  const firstCity = solution[0];
+  const lastCity = solution[solution.length - 1];
+  const distanceMatrix = [];
 
-    currentSize += size;
-    totalScore += value;
+  if (firstCity != lastCity) {
+    return {
+      score: 0,
+      validSolution: false,
+    };
+  }
 
-    if (currentSize > kanpsackInstance.knapsackSize) {
+  if (solution.length != instance.numberOfCities + 1) {
+    return {
+      score: 0,
+      validSolution: false,
+    };
+  }
+
+  const referenceDistance = instance.distances.reduce(
+    (acc, distanceObject) => acc + distanceObject.distance,
+    0
+  );
+
+  instance.distances.forEach(({ i, j, distance }) => {
+    if (!distanceMatrix[i]) {
+      distanceMatrix[i] = [];
+    }
+    if (!distanceMatrix[j]) {
+      distanceMatrix[j] = [];
+    }
+
+    distanceMatrix[i][j] = distance;
+    distanceMatrix[j][i] = distance;
+  });
+
+  const visitedCities = new Set();
+
+  for (let i = 0; i < instance.numberOfCities; i++) {
+    let currentCity = solution[i];
+    let nextCity = solution[i + 1];
+
+    if (
+      visitedCities.has(currentCity) ||
+      currentCity < 1 ||
+      currentCity > instance.numberOfCities ||
+      nextCity < 1 ||
+      nextCity > instance.numberOfCities
+    ) {
       return {
         score: 0,
         validSolution: false,
       };
     }
+
+    visitedCities.add(currentCity);
+
+    let currentDistance = distanceMatrix[currentCity][nextCity];
+    totalTraveledDistance += currentDistance;
   }
 
   return {
-    score: 99999,
+    score: referenceDistance - totalTraveledDistance,
     validSolution: true,
   };
 };
 
-export default evaluateKnapsackProblem;
+export default evaluateTheTravellingSalesmanProlem;
