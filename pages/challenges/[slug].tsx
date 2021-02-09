@@ -182,9 +182,9 @@ const Challenges: React.FC<{
           <Text fontSize={100}>
             {validSolution
               ? newRecord
-                ? `Novo Recorde! ${animatedScore} pontos`
-                : `${animatedScore} pontos`
-              : "Solução invalida!"}
+                ? `New Record! ${animatedScore} points`
+                : `${animatedScore} points`
+              : "Invalid Solution!"}
           </Text>
         </Box>
       </Fade>
