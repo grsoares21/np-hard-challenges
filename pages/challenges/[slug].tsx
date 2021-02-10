@@ -268,7 +268,7 @@ const Challenges: React.FC<{
                 {/** Span only here because tooltip wasn't working with disabled buttons https://github.com/chakra-ui/chakra-ui/issues/500 */}
                 <Button disabled>
                   <FaUpload />
-                  <Text marginLeft="10px">Upload Solutionaaaaaaaa</Text>
+                  <Text marginLeft="10px">Upload Solution</Text>
                 </Button>
               </span>
             </Tooltip>
