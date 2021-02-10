@@ -7,6 +7,7 @@ import {
   Fade,
   EASINGS,
   Link,
+  Tooltip,
 } from "@chakra-ui/react";
 import { join } from "path";
 import matter from "gray-matter";
@@ -243,20 +244,35 @@ const Challenges: React.FC<{
             ) : (
               <Spinner size="xs" />
             ))}
-          <Button
-            onClick={() => {
-              fileInputRef.current?.click();
-            }}
-          >
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                <FaUpload />
-                <Text marginLeft="10px">Upload Solution</Text>
-              </>
-            )}
-          </Button>
+          {user ? (
+            <Button
+              onClick={() => {
+                fileInputRef.current?.click();
+              }}
+            >
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <FaUpload />
+                  <Text marginLeft="10px">Upload Solution</Text>
+                </>
+              )}
+            </Button>
+          ) : (
+            <Tooltip
+              label="You have to be logged in to submit a solution"
+              aria-label="You have to be logged in to submit a solution"
+            >
+              <span>
+                {/** Span only here because tooltip wasn't working with disabled buttons https://github.com/chakra-ui/chakra-ui/issues/500 */}
+                <Button disabled>
+                  <FaUpload />
+                  <Text marginLeft="10px">Upload Solutionaaaaaaaa</Text>
+                </Button>
+              </span>
+            </Tooltip>
+          )}
         </Box>
         <Text
           as="h1"
