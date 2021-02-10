@@ -5,12 +5,18 @@ import matter from "gray-matter";
 import firestore from "../../../lib/firebase/firestore";
 
 interface ChallengeLeaderboardProps {
-  challengeName: string;
+  challengeId: string;
   leaderboardList: { name: string; score: number }[];
 }
 
+// TODO: find a way to retrieve this from the file (Next.js currently doesn't support files on getServerSideProps)
+const challengeNames = {
+  "the-knapsack-problem": "The Knapsack Problem",
+  "the-travelling-salesman-problem": "The Travelling Salesman Problem",
+};
+
 const ChallengeLeaderboard: React.FC<ChallengeLeaderboardProps> = ({
-  challengeName,
+  challengeId,
   leaderboardList,
 }) => {
   return (
@@ -27,7 +33,7 @@ const ChallengeLeaderboard: React.FC<ChallengeLeaderboardProps> = ({
         fontWeight="bold"
         marginY="15px"
       >
-        {challengeName} Leaderboard
+        {challengeNames[challengeId]} Leaderboard
       </Text>
       {leaderboardList.map((user, i) => (
         <Box width="100%" key={i} marginY="5px" display="flex">
@@ -43,7 +49,6 @@ export default ChallengeLeaderboard;
 
 export async function getServerSideProps({ query }) {
   const { challengeId } = query;
-  const challengesDirectory = join(process.cwd(), "challenges");
 
   const users = await Promise.all(
     (
@@ -55,17 +60,9 @@ export async function getServerSideProps({ query }) {
     ).docs.map(async (doc) => await doc.data())
   );
 
-  const challengeData = matter(
-    fs.readFileSync(
-      join(challengesDirectory, challengeId, "statement.md"),
-      "utf8"
-    ),
-    {}
-  );
-
   return {
     props: {
-      challengeName: challengeData.data.name,
+      challengeId,
       leaderboardList: users.map(({ name, scores }) => ({
         name,
         score: scores[challengeId],

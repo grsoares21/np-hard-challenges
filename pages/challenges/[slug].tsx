@@ -235,11 +235,14 @@ const Challenges: React.FC<{
               <Text marginLeft="10px">Download Input</Text>
             </Button>
           </Link>
-          {user && (
-            <Text>
-              Your max score: <b>{userMaxScore ?? <Spinner size="xs" />}</b>
-            </Text>
-          )}
+          {user &&
+            (userMaxScore ? (
+              <Text>
+                Your max score: <b>{userMaxScore}</b>
+              </Text>
+            ) : (
+              <Spinner size="xs" />
+            ))}
           <Button
             onClick={() => {
               fileInputRef.current?.click();
