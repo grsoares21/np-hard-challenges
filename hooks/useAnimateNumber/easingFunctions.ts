@@ -12,7 +12,6 @@ export const easeOutQuad: EasingFunction = (elps, from, to, dr) =>
   -to * (elps /= dr) * (elps - 2) + from;
 
 export const easeInOutQuad: EasingFunction = (elps, from, to, dr) => {
-  console.log({ elps, dr, from, to });
   if ((elps /= dr / 2) < 1) {
     return (to / 2) * elps * elps + from;
   }

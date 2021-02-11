@@ -9,36 +9,34 @@ import githubAuthProvider from "../lib/firebase/githubAuthProvider";
 const LoginButton: React.FC = () => {
   const { user, setUser } = useContext(UserContext);
 
-  return (
-    <Button
-      bg="white"
-      onClick={() => {
-        if (user) {
-          console.log(`Yayy ${user.displayName} is logged in`);
-        } else {
-          firebase
-            .auth()
-            .signInWithPopup(githubAuthProvider)
-            .then((result) => {
-              setUser(result.user);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }
-      }}
-    >
-      {user ? (
+  return user ? (
+    <Link href="/profile">
+      <Button bg="white">
         <>
           <FaGithub />
           <Text marginLeft="10px">{user.displayName ?? user.email}</Text>
         </>
-      ) : (
-        <>
-          <FaGithub />
-          <Text marginLeft="10px">Login With Github</Text>
-        </>
-      )}
+      </Button>
+    </Link>
+  ) : (
+    <Button
+      bg="white"
+      onClick={() => {
+        firebase
+          .auth()
+          .signInWithPopup(githubAuthProvider)
+          .then((result) => {
+            setUser(result.user);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }}
+    >
+      <>
+        <FaGithub />
+        <Text marginLeft="10px">Login With Github</Text>
+      </>
     </Button>
   );
 };
