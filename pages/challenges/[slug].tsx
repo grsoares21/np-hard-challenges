@@ -237,7 +237,7 @@ const Challenges: React.FC<{
             </Button>
           </Link>
           {user &&
-            (userMaxScore ? (
+            (userMaxScore !== null ? (
               <Text>
                 Your max score: <b>{userMaxScore}</b>
               </Text>
