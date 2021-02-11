@@ -31,7 +31,7 @@ const LoginButton: React.FC = () => {
       {user ? (
         <>
           <FaGithub />
-          <Text marginLeft="10px">{user.displayName}</Text>
+          <Text marginLeft="10px">{user.displayName ?? user.email}</Text>
         </>
       ) : (
         <>
