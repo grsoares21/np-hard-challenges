@@ -20,7 +20,9 @@ export default async function authenticationMiddleware(
     const user = await usersCollection.doc(uid).get();
 
     if (!user.exists) {
-      await usersCollection.doc(uid).set({ email, totalScore: 0, scores: {} });
+      await usersCollection
+        .doc(uid)
+        .set({ name, email, totalScore: 0, scores: {} });
     }
 
     next();
